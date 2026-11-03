@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作品集全站内容管理后台 (CMS & Admin) · 100%全文字与图片自定义</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="admin-page-body">
+
+  <!-- ==========================================================================
+       Inline Password Authentication Lock Screen (免 prompt 纯净密码锁)
+       ========================================================================== -->
+  <div id="adminAuthLock" class="admin-auth-lock" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-icon">🔐</div>
+      <h2 class="auth-title">管理员身份验证</h2>
+      <p class="auth-desc">请输入管理员密码以进入全站修改后台<br><span style="color: #60a5fa;">(默认初始密码: 8888)</span></p>
+      <input type="password" id="authPinInput" class="form-input" placeholder="输入密码 (8888)" style="text-align: center; font-size: 1.25rem; letter-spacing: 0.2em;" autofocus>
+      <button id="btnAuthSubmit" class="admin-btn primary" style="width: 100%; justify-content: center; padding: 0.8rem; font-size: 0.95rem; margin-top: 0.4rem;">
+        <span>验证并进入后台</span>
+      </button>
+      <a href="index.html" style="font-size: 0.8rem; color: #888; text-decoration: underline; margin-top: 0.5rem;">返回作品集前台 ↗</a>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Admin Top Header Bar
+       ========================================================================== -->
+  <header class="admin-page-header">
+    <div class="admin-header-left">
+      <h1 class="admin-brand">ALEX · ARCHIVE <span>/ 全站内容管理后台</span></h1>
+      <span class="admin-badge">100% 全文字自定义 · CMS</span>
+      <span id="serverStatusBadge" class="admin-badge" style="background: rgba(34, 197, 94, 0.15); color: #22c55e; border-color: rgba(34, 197, 94, 0.3); font-weight: 500;">🟢 正在检测服务...</span>
+    </div>
+
+    <div class="admin-bar-actions">
+      <button id="btnHeaderSave" class="admin-btn primary" title="立即保存所有修改并实时生效">
+        <span>💾 立即保存所有修改</span>
+      </button>
+      <a href="index.html" class="admin-btn" title="查看前台网站展示效果">
+        <span>👁️ 查看前台展示 ↗</span>
+      </a>
+      <button id="btnExportJson" class="admin-btn" title="下载全站数据备份文件">
+        <span>📥 导出配置备份</span>
+      </button>
+      <label class="admin-btn" title="导入已有数据备份" style="cursor: pointer;">
+        <span>📤 导入备份</span>
+        <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+      </label>
+      <button id="btnResetDefault" class="admin-btn" title="重置回初始默认数据">
+        <span>🔄 恢复默认</span>
+      </button>
+      <button id="btnLogout" class="admin-btn" title="退出管理员模式">
+        <span>🚪 退出登录</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       Admin Main Layout (Sidebar + Tab Panes)
+       ========================================================================== -->
+  <div class="admin-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <ul class="admin-nav-list">
+        <li class="admin-nav-item active" data-tab="tabNav">
+          <span>🏷️ 导航与顶栏文案</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabHero">
+          <span>✨ 主页大标题与阐述</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabTypography">
+          <span>🔤 各部分文本字号设置</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabPhotos">
+          <span>📷 摄影作品管理 (<span id="sidebarPhotoCount">7</span>)</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabVideos">
+          <span>🎬 剪辑视频管理 (<span id="sidebarVideoCount">4</span>)</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabAbout">
+          <span>👤 个人简介全部图文</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabContact">
+          <span>📬 联系与社交全部文案</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabFooter">
+          <span>📑 页脚与弹窗底层文字</span>
+        </li>
+        <li class="admin-nav-item" data-tab="tabSecurity">
+          <span>🔐 权限密码与备份</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main-content">
+
+      <!-- ====================================================================
+           Tab 1: 导航与顶栏文案
+           ==================================================================== -->
+      <section id="tabNav" class="admin-tab-pane active">
+        <div class="section-head">
+          <h2 class="section-title">导航栏与顶栏所有文案</h2>
+          <p class="section-desc">修改顶部品牌名称、中英副标、四个导航菜单文字及接单状态徽章。</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">网站主品牌名 (brand_title)</label>
+            <input type="text" data-tid="brand_title" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">顶栏副标题 (brand_subtitle)</label>
+            <input type="text" data-tid="brand_subtitle" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">接单状态徽章文字 (status_badge)</label>
+            <input type="text" data-tid="status_badge" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">导航项 1 文字 (nav_works)</label>
+            <input type="text" data-tid="nav_works" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">导航项 2 文字 (nav_video)</label>
+            <input type="text" data-tid="nav_video" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">导航项 3 文字 (nav_about)</label>
+            <input type="text" data-tid="nav_about" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">导航项 4 文字 (nav_contact)</label>
+            <input type="text" data-tid="nav_contact" class="form-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 2: 主页大标题与开篇阐述 (Hero Section)
+           ==================================================================== -->
+      <section id="tabHero" class="admin-tab-pane">
+        <div class="section-head">
+          <h2 class="section-title">主页大标题与开篇阐述</h2>
+          <p class="section-desc">修改开场年份角标、大标题、中篇诗意阐释以及三个核心媒介说明。</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">主页年份与系列角标 (hero_eyebrow)</label>
+            <input type="text" data-tid="hero_eyebrow" class="form-input">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">主页大标题 (hero_title - 支持换行与HTML)</label>
+            <textarea data-tid="hero_title" class="form-textarea" style="min-height: 80px;"></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">创作理念叙事语句 (hero_statement)</label>
+            <textarea data-tid="hero_statement" class="form-textarea" style="min-height: 90px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 1 标题 (hero_meta1_label)</label>
+            <input type="text" data-tid="hero_meta1_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 1 内容 (hero_meta1_val)</label>
+            <input type="text" data-tid="hero_meta1_val" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 2 标题 (hero_meta2_label)</label>
+            <input type="text" data-tid="hero_meta2_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 2 内容 (hero_meta2_val)</label>
+            <input type="text" data-tid="hero_meta2_val" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 3 标题 (hero_meta3_label)</label>
+            <input type="text" data-tid="hero_meta3_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 3 内容 (hero_meta3_val)</label>
+            <input type="text" data-tid="hero_meta3_val" class="form-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab: 全站各部分文本字号实时调节 (Typography & Font Size Settings)
+           ==================================================================== -->
+      <section id="tabTypography" class="admin-tab-pane">
+        <div class="section-head">
+          <h2 class="section-title">全站各部分文本字号实时调节</h2>
+          <p class="section-desc">拖动滑块可直观微调全站各个区域的文字大小（像素 px）。右侧配有实时缩放预览，点击右上角“💾 保存全部修改”即可生效于前台。</p>
+        </div>
+
+        <div class="typography-groups-container">
+
+          <!-- 1. 顶栏与全站导航 -->
+          <div class="typo-group-card">
+            <h3 class="typo-group-title">
+              <span>🏷️ 顶栏与全站导航文字字号</span>
+              <span style="font-size: 0.78rem; color: #777; font-weight: normal;">Header & Navigation</span>
+            </h3>
+            <div class="typo-items-grid">
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">网站主品牌标题</span>
+                  <span class="typo-code">.brand-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="brand_title" min="14" max="36" step="1" value="20">
+                  <div class="typo-val-badge"><span id="fsVal_brand_title">20</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_brand_title">ALEX · ARCHIVE</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">顶栏中英副标题</span>
+                  <span class="typo-code">.brand-subtitle</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="brand_subtitle" min="10" max="22" step="1" value="12">
+                  <div class="typo-val-badge"><span id="fsVal_brand_subtitle">12</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_brand_subtitle">PHOTOGRAPHY / 摄影集</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">顶部导航菜单项</span>
+                  <span class="typo-code">.nav-link</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="nav_links" min="11" max="24" step="1" value="14">
+                  <div class="typo-val-badge"><span id="fsVal_nav_links">14</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_nav_links">WORKS / 作品</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">接单状态徽标文案</span>
+                  <span class="typo-code">.status-badge</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="status_badge" min="10" max="18" step="1" value="12">
+                  <div class="typo-val-badge"><span id="fsVal_status_badge">12</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_status_badge">AVAILABLE FOR 2026</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 首屏视觉与理念 -->
+          <div class="typo-group-card">
+            <h3 class="typo-group-title">
+              <span>✨ 首屏视觉与摄影理念字号</span>
+              <span style="font-size: 0.78rem; color: #777; font-weight: normal;">Hero Section</span>
+            </h3>
+            <div class="typo-items-grid">
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">首屏微标签 (Eyebrow)</span>
+                  <span class="typo-code">.hero-eyebrow</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="hero_eyebrow" min="10" max="22" step="1" value="13">
+                  <div class="typo-val-badge"><span id="fsVal_hero_eyebrow">13</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_hero_eyebrow">SELECTED WORKS</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">首屏巨幅主标题</span>
+                  <span class="typo-code">.hero-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="hero_title" min="36" max="110" step="2" value="72">
+                  <div class="typo-val-badge"><span id="fsVal_hero_title">72</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_hero_title">Silent Gaze</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">摄影理念陈述段落</span>
+                  <span class="typo-code">.hero-statement</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="hero_statement" min="13" max="32" step="1" value="19">
+                  <div class="typo-val-badge"><span id="fsVal_hero_statement">19</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_hero_statement">在喧嚣之外留下真实停顿</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">首屏底部媒介标签</span>
+                  <span class="typo-code">.hero-meta-label</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="hero_meta_label" min="10" max="18" step="1" value="12">
+                  <div class="typo-val-badge"><span id="fsVal_hero_meta_label">12</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_hero_meta_label">MEDIUM / 媒介</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">首屏底部媒介内容</span>
+                  <span class="typo-code">.hero-meta-val</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="hero_meta_val" min="11" max="24" step="1" value="15">
+                  <div class="typo-val-badge"><span id="fsVal_hero_meta_val">15</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_hero_meta_val">Digital & Natural Light</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. 摄影作品板块 -->
+          <div class="typo-group-card">
+            <h3 class="typo-group-title">
+              <span>📷 摄影作品板块文字字号</span>
+              <span style="font-size: 0.78rem; color: #777; font-weight: normal;">Works Showcase</span>
+            </h3>
+            <div class="typo-items-grid">
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">封面拍摄板块主标题</span>
+                  <span class="typo-code">.section-curator-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="series_title" min="16" max="48" step="1" value="28">
+                  <div class="typo-val-badge"><span id="fsVal_series_title">28</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_series_title">01. 小红书博主封面拍摄</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">卡片序号大数字</span>
+                  <span class="typo-code">.item-index</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="photo_index" min="24" max="72" step="2" value="45">
+                  <div class="typo-val-badge"><span id="fsVal_photo_index">45</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_photo_index">01</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">作品中文主标题</span>
+                  <span class="typo-code">.item-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="photo_title" min="16" max="44" step="1" value="27">
+                  <div class="typo-val-badge"><span id="fsVal_photo_title">27</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_photo_title">泉水之音</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">作品英文副标题</span>
+                  <span class="typo-code">.item-title-en</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="photo_title_en" min="12" max="30" step="1" value="18">
+                  <div class="typo-val-badge"><span id="fsVal_photo_title_en">18</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_photo_title_en">Morning Melody</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">策展简介故事正文</span>
+                  <span class="typo-code">.item-desc</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="photo_desc" min="12" max="24" step="1" value="15">
+                  <div class="typo-val-badge"><span id="fsVal_photo_desc">15</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_photo_desc">喷泉水雾弥散在温暖晨光中</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">拍摄参数标签</span>
+                  <span class="typo-code">.item-specs</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="photo_specs" min="10" max="18" step="1" value="12">
+                  <div class="typo-val-badge"><span id="fsVal_photo_specs">12</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_photo_specs">商业人像 · 自然光 · 2024</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 剪辑视频板块 -->
+          <div class="typo-group-card">
+            <h3 class="typo-group-title">
+              <span>🎬 剪辑视频板块文字字号</span>
+              <span style="font-size: 0.78rem; color: #777; font-weight: normal;">Motion & Editing</span>
+            </h3>
+            <div class="typo-items-grid">
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">剪辑作品板块主标题</span>
+                  <span class="typo-code">.section-curator-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="video_title" min="16" max="48" step="1" value="28">
+                  <div class="typo-val-badge"><span id="fsVal_video_title">28</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_video_title">02. 剪辑作品</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">视频卡片标题</span>
+                  <span class="typo-code">.video-card-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="video_card_title" min="13" max="28" step="1" value="18">
+                  <div class="typo-val-badge"><span id="fsVal_video_card_title">18</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_video_card_title">商业博主 · 封面动态卡点</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">视频卡片分类与序号</span>
+                  <span class="typo-code">.video-card-top-row</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="video_card_cat" min="10" max="18" step="1" value="12">
+                  <div class="typo-val-badge"><span id="fsVal_video_card_cat">12</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_video_card_cat">01 · 节奏剪辑</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. 个人简介板块 -->
+          <div class="typo-group-card">
+            <h3 class="typo-group-title">
+              <span>👤 个人简介板块文字字号</span>
+              <span style="font-size: 0.78rem; color: #777; font-weight: normal;">About Me</span>
+            </h3>
+            <div class="typo-items-grid">
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">简介板块微标签</span>
+                  <span class="typo-code">.about-text-col .mono-tag</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_eyebrow" min="10" max="20" step="1" value="13">
+                  <div class="typo-val-badge"><span id="fsVal_about_eyebrow">13</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_eyebrow">ABOUT THE ARTIST</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">个人简介主标题</span>
+                  <span class="typo-code">.about-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_title" min="22" max="64" step="1" value="42">
+                  <div class="typo-val-badge"><span id="fsVal_about_title">42</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_title">ABOUT / 关于我</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">个人简介英文副标题</span>
+                  <span class="typo-code">.about-title span</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_title_en" min="12" max="28" step="1" value="18">
+                  <div class="typo-val-badge"><span id="fsVal_about_title_en">18</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_title_en">Light & Human Resonance</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">核心理念高亮大字</span>
+                  <span class="typo-code">.about-philosophy</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_philosophy" min="13" max="28" step="1" value="18">
+                  <div class="typo-val-badge"><span id="fsVal_about_philosophy">18</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_philosophy">专注于人像写真、商业博主视觉</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">详细自我介绍正文</span>
+                  <span class="typo-code">.about-philosophy-sub</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_philosophy_sub" min="12" max="24" step="1" value="15">
+                  <div class="typo-val-badge"><span id="fsVal_about_philosophy_sub">15</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_philosophy_sub">不刻意制造繁冗的形式...</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">履历方向特征标签</span>
+                  <span class="typo-code">.spec-label</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_spec_label" min="10" max="18" step="1" value="12">
+                  <div class="typo-val-badge"><span id="fsVal_about_spec_label">12</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_spec_label">CREATIVE FOCUS</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">履历方向特征数值</span>
+                  <span class="typo-code">.spec-value</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="about_spec_val" min="11" max="22" step="1" value="14">
+                  <div class="typo-val-badge"><span id="fsVal_about_spec_val">14</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_about_spec_val">人像写真 · 封面商业</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. 联系与页脚 -->
+          <div class="typo-group-card">
+            <h3 class="typo-group-title">
+              <span>📬 联系与页脚文字字号</span>
+              <span style="font-size: 0.78rem; color: #777; font-weight: normal;">Contact & Footer</span>
+            </h3>
+            <div class="typo-items-grid">
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">联系板块微标签</span>
+                  <span class="typo-code">.contact-header .mono-tag</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="contact_eyebrow" min="10" max="20" step="1" value="13">
+                  <div class="typo-val-badge"><span id="fsVal_contact_eyebrow">13</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_contact_eyebrow">COMMISSION & INQUIRY</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">联系板块主标题</span>
+                  <span class="typo-code">.contact-title</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="contact_title" min="24" max="84" step="2" value="52">
+                  <div class="typo-val-badge"><span id="fsVal_contact_title">52</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_contact_title">Let's Create Together</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">联系卡片主要文字 (邮箱/微信/Bilibili)</span>
+                  <span class="typo-code">.contact-card-val</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="contact_email" min="14" max="42" step="1" value="24">
+                  <div class="typo-val-badge"><span id="fsVal_contact_email">24</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_contact_email">alex.lens@archive.com</div>
+              </div>
+
+              <div class="typo-item-row">
+                <div class="typo-meta">
+                  <span class="typo-label">页脚版权与声明文字</span>
+                  <span class="typo-code">.site-footer</span>
+                </div>
+                <div class="typo-slider-col">
+                  <input type="range" class="typo-range-input" data-fs-key="footer_text" min="10" max="20" step="1" value="13">
+                  <div class="typo-val-badge"><span id="fsVal_footer_text">13</span>px</div>
+                </div>
+                <div class="typo-preview-box" id="fsPrev_footer_text">© 2026 ALEX ARCHIVE</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 3: 摄影作品管理 (Photography Works)
+           ==================================================================== -->
+      <section id="tabPhotos" class="admin-tab-pane">
+        <div class="section-head">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 class="section-title">摄影作品全部图文与动态管理</h2>
+              <p class="section-desc">随时添加新作品或删除已有作品，支持一键上下调整展示顺序，修改图片与全部文案。</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+              <span id="photoCountBadge" class="count-pill">当前共 7 件作品</span>
+              <button type="button" id="btnAddNewPhoto" class="btn-add-item">➕ 添加新摄影作品</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 2rem;">
+          <div class="form-group">
+            <label class="form-label">板块主标题 (series_title)</label>
+            <input type="text" data-tid="series_title" class="form-input" placeholder="01. 小红书博主封面拍摄">
+          </div>
+          <div class="form-group">
+            <label class="form-label">横向滑动提示文案 (gallery_drag_hint)</label>
+            <input type="text" data-tid="gallery_drag_hint" class="form-input">
+          </div>
+        </div>
+
+        <div id="photoCardsContainer" style="display: flex; flex-direction: column; gap: 2rem;">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 4: 剪辑作品管理 (Video Reels)
+           ==================================================================== -->
+      <section id="tabVideos" class="admin-tab-pane">
+        <div class="section-head">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 class="section-title">剪辑作品全部图文与动态管理</h2>
+              <p class="section-desc">修改剪辑作品、视频封面已优化为 3:4 精致尺寸。支持一键直接读取小红书链接封面并自动同步！</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+              <span id="videoCountBadge" class="count-pill">当前共 4 个剪辑短片</span>
+              <button type="button" id="btnAddNewVideo" class="btn-add-item">➕ 添加新剪辑作品</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 2rem;">
+          <div class="form-group">
+            <label class="form-label">板块主标题 (video_title)</label>
+            <input type="text" data-tid="video_title" class="form-input" placeholder="02. 剪辑作品">
+          </div>
+        </div>
+
+        <div id="videoCardsContainer" style="display: flex; flex-direction: column; gap: 2rem;">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 5: 个人简介全部图文 (About Me)
+           ==================================================================== -->
+      <section id="tabAbout" class="admin-tab-pane">
+        <div class="section-head">
+          <h2 class="section-title">个人简介全部图文自定义 (About Me)</h2>
+          <p class="section-desc">修改肖像照片、照片悬浮印章文案、主标题、两段哲学阐释、四个参数组以及两个按钮文案。</p>
+        </div>
+
+        <div class="item-edit-card" style="margin-bottom: 2rem;">
+          <div class="card-preview-col">
+            <img id="aboutMePreview" src="assets/images/web/Me.jpg" alt="肖像预览" class="card-img-preview">
+            <label class="file-upload-btn-label">
+              <span>📷 挑选电脑照片更换肖像</span>
+              <input type="file" id="aboutPortraitFileInput" accept="image/*" style="display: none;">
+            </label>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+            <div class="form-group">
+              <label class="form-label">照片右下角印章标签 (about_stamp)</label>
+              <input type="text" data-tid="about_stamp" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">简介主标题 (about_title)</label>
+              <input type="text" data-tid="about_title" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">英文副标题 (about_subtitle_en)</label>
+              <input type="text" data-tid="about_subtitle_en" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">创作理念第 1 段 (about_philosophy_1)</label>
+              <textarea data-tid="about_philosophy_1" class="form-textarea"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">理念延伸第 2 段 (about_philosophy_2)</label>
+              <textarea data-tid="about_philosophy_2" class="form-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">参数 1 标题 (about_spec1_label)</label>
+            <input type="text" data-tid="about_spec1_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 1 内容 (about_spec1_val)</label>
+            <input type="text" data-tid="about_spec1_val" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 2 标题 (about_spec2_label)</label>
+            <input type="text" data-tid="about_spec2_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 2 内容 (about_spec2_val)</label>
+            <input type="text" data-tid="about_spec2_val" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 3 标题 (about_spec3_label)</label>
+            <input type="text" data-tid="about_spec3_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 3 内容 (about_spec3_val)</label>
+            <input type="text" data-tid="about_spec3_val" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 4 标题 (about_spec4_label)</label>
+            <input type="text" data-tid="about_spec4_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">参数 4 内容 (about_spec4_val)</label>
+            <input type="text" data-tid="about_spec4_val" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">主按钮文案 (about_btn_contact)</label>
+            <input type="text" data-tid="about_btn_contact" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">副按钮文案 (about_btn_works)</label>
+            <input type="text" data-tid="about_btn_works" class="form-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 6: 联系与社交全部文案 (Contact Section)
+           ==================================================================== -->
+      <section id="tabContact" class="admin-tab-pane">
+        <div class="section-head">
+          <h2 class="section-title">联系与社交媒体全部文案及网址</h2>
+          <p class="section-desc">修改约拍邀请语、邮箱、微信号、各个平台的显示文字及跳转链接。</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">联系版块角标 (contact_eyebrow)</label>
+            <input type="text" data-tid="contact_eyebrow" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">联系版块大标题 (contact_title)</label>
+            <input type="text" data-tid="contact_title" class="form-input">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">合作邀请正文 (contact_note)</label>
+            <textarea data-tid="contact_note" class="form-textarea"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">邮箱栏标签 (contact_email_label)</label>
+            <input type="text" data-tid="contact_email_label" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">电子邮箱 (contact_email)</label>
+            <input type="email" data-tid="contact_email" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">点击复制徽章文字 (contact_copy_badge)</label>
+            <input type="text" data-tid="contact_copy_badge" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">微信展示文案 (contact_wechat)</label>
+            <input type="text" data-tid="contact_wechat" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bilibili 按钮文字 (contact_social_bili)</label>
+            <input type="text" data-tid="contact_social_bili" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bilibili 个人空间网址链接（点击直接跳转）</label>
+            <input type="url" id="linkContactBili" class="form-input" placeholder="https://space.bilibili.com/...">
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 7: 页脚与弹窗底层文字 (Footer & UI)
+           ==================================================================== -->
+      <section id="tabFooter" class="admin-tab-pane">
+        <div class="section-head">
+          <h2 class="section-title">页脚版权与界面底层所有细节文字</h2>
+          <p class="section-desc">修改页脚版权署名、字体声明、回到顶部按钮文案、全屏画廊与视频弹窗提示文案。</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">页脚版权文案 (footer_copyright)</label>
+            <input type="text" data-tid="footer_copyright" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">页脚字体声明文案 (footer_typography)</label>
+            <input type="text" data-tid="footer_typography" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">回到顶部按钮文案 (footer_back_to_top)</label>
+            <input type="text" data-tid="footer_back_to_top" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">全屏画廊原片下载按钮 (lightbox_raw_btn)</label>
+            <input type="text" data-tid="lightbox_raw_btn" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">视频弹窗免登录提示语 (video_modal_hint)</label>
+            <input type="text" data-tid="video_modal_hint" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">视频弹窗复制按钮文案 (video_modal_btn_copy)</label>
+            <input type="text" data-tid="video_modal_btn_copy" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">视频弹窗原帖跳转按钮文案 (video_modal_btn_open)</label>
+            <input type="text" data-tid="video_modal_btn_open" class="form-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           Tab 8: 权限密码与备份 (Security)
+           ==================================================================== -->
+      <section id="tabSecurity" class="admin-tab-pane">
+        <div class="section-head">
+          <h2 class="section-title">权限密码与数据安全管理</h2>
+          <p class="section-desc">修改进入前台可视化编辑及后台的登录密码，随时下载全站数据备份或导入。</p>
+        </div>
+
+        <div class="form-grid" style="max-width: 500px;">
+          <div class="form-group full-width">
+            <label class="form-label">管理员登录密码 (PIN)</label>
+            <input type="text" id="inputAdminPin" class="form-input" placeholder="默认密码: 8888">
+            <span style="font-size: 0.76rem; color: #888; margin-top: 0.3rem;">初始密码为 8888，您可以随意修改为您熟悉的密码。</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastNotice" class="toast-notice" role="status">已保存</div>
+
+  <!-- Dedicated Standalone CMS Script for admin.html (零冲突、响应敏捷) -->
+  <script>
+    (function() {
+      const STORAGE_KEY = "alex_portfolio_custom_data";
+      const AUTH_KEY = "alex_portfolio_admin_auth";
+      const DEFAULT_PIN = "8888";
+      let currentData = null;
+
+      // Unified API fetcher that intelligently routes across file://, localhost:8765, and 127.0.0.1:8765
+      async function apiFetch(path, options = {}) {
+        const cleanPath = path.startsWith('/') ? path : '/' + path;
+        const targetHost = (window.location.protocol.startsWith('http') && window.location.port === '8765')
+          ? ''
+          : 'http://127.0.0.1:8765';
+
+        try {
+          return await fetch(targetHost + cleanPath, options);
+        } catch (err) {
+          if (targetHost.includes('127.0.0.1')) {
+            try {
+              return await fetch('http://localhost:8765' + cleanPath, options);
+            } catch (err2) {
+              throw err;
+            }
+          }
+          throw err;
+        }
+      }
+
+      // Check server connectivity and update top pill
+      async function checkServerStatus() {
+        const badge = document.getElementById('serverStatusBadge');
+        if (!badge) return false;
+        try {
+          const resp = await apiFetch('/api/ping');
+          if (resp.ok) {
+            badge.innerHTML = '🟢 本地服务已连接 (8765)';
+            badge.style.background = 'rgba(34, 197, 94, 0.15)';
+            badge.style.color = '#22c55e';
+            badge.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+            badge.title = '本地服务正在稳定运行，所有更改将实时同步至本地文件';
+            return true;
+          }
+        } catch (e) {
+          badge.innerHTML = '⚠️ 本地服务未运行 (点击查看说明)';
+          badge.style.background = 'rgba(245, 158, 11, 0.15)';
+          badge.style.color = '#f59e0b';
+          badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+          badge.style.cursor = 'pointer';
+          badge.onclick = () => {
+            alert('【提示】当前未检测到后台 Python 服务。\n\n如需使用【一键自动获取小红书封面】或自动写入本地数据，请前往项目文件夹，双击运行【启动本地服务.bat】即可！\n\n您也可以直接访问：http://127.0.0.1:8765/admin.html');
+          };
+        }
+        return false;
+      }
+
+      // 1. Check Authentication Status
+      const authLock = document.getElementById('adminAuthLock');
+      const authInput = document.getElementById('authPinInput');
+      const btnAuthSubmit = document.getElementById('btnAuthSubmit');
+
+      function isAuthed() {
+        return localStorage.getItem(AUTH_KEY) === 'true';
+      }
+
+      function showAuthLock() {
+        authLock.style.display = 'flex';
+        authInput.value = '';
+        setTimeout(() => authInput.focus(), 100);
+      }
+
+      function hideAuthLock() {
+        authLock.style.display = 'none';
+      }
+
+      async function verifyPin() {
+        const inputVal = authInput.value.trim();
+        const correctPin = (currentData && currentData.admin && currentData.admin.pin) 
+          ? currentData.admin.pin 
+          : DEFAULT_PIN;
+
+        if (inputVal === correctPin) {
+          localStorage.setItem(AUTH_KEY, 'true');
+          hideAuthLock();
+          showToast('验证通过，欢迎进入管理后台！');
+        } else {
+          alert('密码错误，请重试。(默认初始密码: 8888)');
+          authInput.select();
+        }
+      }
+
+      btnAuthSubmit.addEventListener('click', verifyPin);
+      authInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') verifyPin();
+      });
+
+      // 2. Tab Navigation
+      document.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+          document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
+          item.classList.add('active');
+          const target = item.getAttribute('data-tab');
+          if (target) {
+            const pane = document.getElementById(target);
+            if (pane) pane.classList.add('active');
+          }
+        });
+      });
+
+      // Helper: Upload file to server or fallback to canvas compression
+      async function uploadFileToServer(file, category, slot) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            let dataUrl = e.target.result;
+            // Pre-compress oversized camera photos to max 2400px before uploading
+            if (file.size > 1.5 * 1024 * 1024) {
+              try {
+                dataUrl = await compressImageToMaxDim(dataUrl, 2400, 0.90);
+              } catch(e){}
+            }
+
+            try {
+              const resp = await apiFetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ category, slot, dataUrl })
+              });
+              if (resp.ok) {
+                const res = await resp.json();
+                if (res.success) {
+                  resolve(res);
+                  return;
+                }
+              }
+            } catch (err) {
+              console.warn('API upload error, using compressed fallback', err);
+            }
+
+            // Fallback: client-side canvas compression to max 1200px / JPEG 0.75
+            compressImageClientSide(dataUrl, (compUrl) => {
+              resolve({ image: compUrl, thumb: compUrl });
+            });
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function compressImageToMaxDim(dataUrl, maxDim, quality) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+      }
+
+      function compressImageClientSide(dataUrl, callback) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL('image/jpeg', 0.75));
+        };
+        img.onerror = () => callback(dataUrl);
+        img.src = dataUrl;
+      }
+
+      // 3. Load Data
+      async function loadData() {
+        checkServerStatus();
+        // Fetch from server first to get the authoritative latest disk data
+        try {
+          const r = await apiFetch('/assets/data/portfolio_data.json?t=' + Date.now());
+          if (r.ok) {
+            currentData = await r.json();
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+            } catch(e){}
+          }
+        } catch(e){
+          console.warn("Could not fetch server file, trying localStorage", e);
+        }
+
+        // From localStorage if server fetch failed
+        if (!currentData) {
+          const local = localStorage.getItem(STORAGE_KEY);
+          if (local) {
+            try {
+              currentData = JSON.parse(local);
+            } catch(e){}
+          }
+        }
+
+        if (!currentData) currentData = {};
+        if (!currentData.customTexts) currentData.customTexts = {};
+        if (!Array.isArray(currentData.photography)) currentData.photography = [];
+        if (!Array.isArray(currentData.videoReels)) currentData.videoReels = [];
+
+        // Check auth status
+        if (!isAuthed()) {
+          showAuthLock();
+        }
+
+        populateUI();
+      }
+
+      // 4. Populate Form Controls
+      function populateUI() {
+        const data = currentData;
+        if (!data) return;
+
+        // Populate all data-tid fields
+        document.querySelectorAll('[data-tid]').forEach(inp => {
+          const tid = inp.getAttribute('data-tid');
+          if (data.customTexts && data.customTexts[tid] !== undefined) {
+            inp.value = data.customTexts[tid];
+          }
+        });
+
+        // Populate Font Size Sliders & Setup Live Listeners
+        if (!data.fontSizes) data.fontSizes = {};
+        document.querySelectorAll('input[data-fs-key]').forEach(slider => {
+          const key = slider.getAttribute('data-fs-key');
+          if (data.fontSizes[key] !== undefined) {
+            slider.value = data.fontSizes[key];
+          }
+          const valBadge = document.getElementById('fsVal_' + key);
+          const prevBox = document.getElementById('fsPrev_' + key);
+          if (valBadge) valBadge.textContent = slider.value;
+          if (prevBox) prevBox.style.fontSize = slider.value + 'px';
+
+          slider.oninput = () => {
+            const val = slider.value;
+            if (valBadge) valBadge.textContent = val;
+            if (prevBox) prevBox.style.fontSize = val + 'px';
+            data.fontSizes[key] = parseInt(val, 10);
+          };
+        });
+
+        // About Portrait Preview
+        const aboutImg = (data.about && data.about.portraitImg) ? data.about.portraitImg : 'assets/images/web/Me.jpg';
+        const mePrev = document.getElementById('aboutMePreview');
+        if (mePrev) mePrev.src = aboutImg;
+
+        const portInput = document.getElementById('aboutPortraitFileInput');
+        if (portInput) {
+          portInput.addEventListener('change', async () => {
+            const file = portInput.files[0];
+            if (!file) return;
+            showToast('正在上传并优化肖像图片...');
+            try {
+              const res = await uploadFileToServer(file, 'portrait', 0);
+              mePrev.src = res.image;
+              if (!data.about) data.about = {};
+              data.about.portraitImg = res.image;
+              showToast('肖像照片上传并优化成功！请点击上方“保存修改”');
+            } catch (err) {
+              console.error(err);
+              showToast('肖像上传失败，请重试');
+            }
+          });
+        }
+
+        // Contact URLs
+        if (data.contact) {
+          const bili = document.getElementById('linkContactBili');
+          if (bili && data.contact.bilibili) bili.value = data.contact.bilibili;
+        }
+
+        // Admin PIN
+        const pinInp = document.getElementById('inputAdminPin');
+        if (pinInp) {
+          pinInp.value = (data.admin && data.admin.pin) ? data.admin.pin : DEFAULT_PIN;
+        }
+
+        // Build Dynamic Photo Cards
+        function buildPhotoCards() {
+          const photoContainer = document.getElementById('photoCardsContainer');
+          const countBadge = document.getElementById('photoCountBadge');
+          if (!photoContainer) return;
+          if (!Array.isArray(data.photography)) data.photography = [];
+
+          if (countBadge) {
+            countBadge.textContent = `当前共 ${data.photography.length} 件作品`;
+          }
+          const sideP = document.getElementById('sidebarPhotoCount');
+          if (sideP) sideP.textContent = data.photography.length;
+
+          photoContainer.innerHTML = '';
+          data.photography.forEach((pItem, i) => {
+            const card = document.createElement('div');
+            card.className = 'item-edit-card';
+            card.setAttribute('data-photo-index', i);
+
+            const displayNum = pItem.num || String(i + 1).padStart(2, '0');
+            const previewSrc = pItem.thumb || pItem.image || `assets/images/thumbs/0${(i % 7) + 1}.jpg`;
+
+            card.innerHTML = `
+              <div class="item-card-header">
+                <div class="item-card-badge">
+                  <span>📷 摄影作品</span>
+                  <span class="count-pill">No. ${displayNum}</span>
+                </div>
+                <div class="item-card-actions">
+                  <button type="button" class="btn-icon-control btn-photo-up" ${i === 0 ? 'disabled' : ''} title="向上移动顺序">↑ 上移</button>
+                  <button type="button" class="btn-icon-control btn-photo-down" ${i === data.photography.length - 1 ? 'disabled' : ''} title="向下移动顺序">↓ 下移</button>
+                  <button type="button" class="btn-delete-card btn-photo-del" title="从作品集删除此照片">🗑️ 删除此作品</button>
+                </div>
+              </div>
+
+              <div class="card-preview-col">
+                <img id="photoPreview_${i}" src="${previewSrc}" alt="作品预览" class="card-img-preview">
+                <label class="file-upload-btn-label">
+                  <span>📷 选图替换作品 ${displayNum}</span>
+                  <input type="file" id="photoFileInput_${i}" accept="image/*" style="display: none;">
+                </label>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">序号角标 (如 01, 02)</label>
+                  <input type="text" class="form-input" data-pfield="num" value="${displayNum}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">全屏查看按钮文案</label>
+                  <input type="text" class="form-input" data-pfield="viewPill" value="${pItem.viewPill || 'VIEW · 全屏观赏'}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">作品中文主标题</label>
+                  <input type="text" class="form-input" data-pfield="title" value="${pItem.title || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">英文副标题</label>
+                  <input type="text" class="form-input" data-pfield="titleEn" value="${pItem.titleEn || ''}">
+                </div>
+                <div class="form-group full-width">
+                  <label class="form-label">策展简介故事</label>
+                  <textarea class="form-textarea" data-pfield="desc">${pItem.desc || ''}</textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">拍摄参数标签 1</label>
+                  <input type="text" class="form-input" data-pfield="spec1" value="${pItem.spec1 || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">拍摄参数标签 2</label>
+                  <input type="text" class="form-input" data-pfield="spec2" value="${pItem.spec2 || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">拍摄参数标签 3</label>
+                  <input type="text" class="form-input" data-pfield="spec3" value="${pItem.spec3 || ''}">
+                </div>
+              </div>
+            `;
+            photoContainer.appendChild(card);
+
+            // Live input changes sync
+            card.querySelectorAll('[data-pfield]').forEach(input => {
+              input.addEventListener('input', () => {
+                const field = input.getAttribute('data-pfield');
+                data.photography[i][field] = input.value;
+              });
+            });
+
+            // Image file upload
+            const fInput = card.querySelector(`#photoFileInput_${i}`);
+            fInput.addEventListener('change', async () => {
+              const file = fInput.files[0];
+              if (!file) return;
+              showToast(`正在上传并优化作品 ${displayNum} 大图与缩略图...`);
+              try {
+                const res = await uploadFileToServer(file, 'photo', i);
+                card.querySelector(`#photoPreview_${i}`).src = res.thumb || res.image;
+                data.photography[i].image = res.image;
+                data.photography[i].thumb = res.thumb || res.image;
+                showToast(`作品 ${displayNum} 图片已成功处理！请点击上方“保存修改”`);
+              } catch (err) {
+                console.error(err);
+                showToast(`作品 ${displayNum} 处理失败，请重试`);
+              }
+            });
+
+            // Move Up
+            const btnUp = card.querySelector('.btn-photo-up');
+            if (btnUp) {
+              btnUp.addEventListener('click', () => {
+                if (i > 0) {
+                  const temp = data.photography[i];
+                  data.photography[i] = data.photography[i - 1];
+                  data.photography[i - 1] = temp;
+                  buildPhotoCards();
+                  showToast('已调整作品顺序，请点击右上角保存！');
+                }
+              });
+            }
+
+            // Move Down
+            const btnDown = card.querySelector('.btn-photo-down');
+            if (btnDown) {
+              btnDown.addEventListener('click', () => {
+                if (i < data.photography.length - 1) {
+                  const temp = data.photography[i];
+                  data.photography[i] = data.photography[i + 1];
+                  data.photography[i + 1] = temp;
+                  buildPhotoCards();
+                  showToast('已调整作品顺序，请点击右上角保存！');
+                }
+              });
+            }
+
+            // Delete Card
+            const btnDel = card.querySelector('.btn-photo-del');
+            if (btnDel) {
+              btnDel.addEventListener('click', () => {
+                if (confirm(`确定要从作品集中删除作品「${displayNum} · ${pItem.title || '未命名'}」吗？`)) {
+                  data.photography.splice(i, 1);
+                  data.photography.forEach((item, idx) => {
+                    item.num = String(idx + 1).padStart(2, '0');
+                  });
+                  buildPhotoCards();
+                  showToast('作品已删除，请点击右上角“保存修改”以同步到前台！');
+                }
+              });
+            }
+          });
+        }
+
+        // Add New Photo button
+        const btnAddPhoto = document.getElementById('btnAddNewPhoto');
+        if (btnAddPhoto) {
+          btnAddPhoto.onclick = () => {
+            const nextIdx = data.photography.length + 1;
+            const nextNum = String(nextIdx).padStart(2, '0');
+            data.photography.push({
+              id: nextIdx,
+              num: nextNum,
+              title: '新建摄影作品 ' + nextNum,
+              titleEn: 'New Photography Work',
+              desc: '在此输入关于这幅作品的光影叙事与创作背景...',
+              spec1: '人像写真',
+              spec2: '柔和自然光',
+              spec3: '2024',
+              viewPill: 'VIEW · 全屏观赏',
+              image: 'assets/images/web/01.jpg',
+              thumb: 'assets/images/thumbs/01.jpg',
+              raw: '博主封面摄影/01.jpg'
+            });
+            buildPhotoCards();
+            const photoContainer = document.getElementById('photoCardsContainer');
+            if (photoContainer && photoContainer.lastElementChild) {
+              photoContainer.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            showToast(`已添加新摄影作品 ${nextNum}，请选图并编辑后点击右上角保存！`);
+          };
+        }
+
+        // Build Dynamic Video Cards
+        function buildVideoCards() {
+          const videoContainer = document.getElementById('videoCardsContainer');
+          const countBadge = document.getElementById('videoCountBadge');
+          if (!videoContainer) return;
+          if (!Array.isArray(data.videoReels)) data.videoReels = [];
+
+          if (countBadge) {
+            countBadge.textContent = `当前共 ${data.videoReels.length} 个剪辑作品`;
+          }
+          const sideV = document.getElementById('sidebarVideoCount');
+          if (sideV) sideV.textContent = data.videoReels.length;
+
+          videoContainer.innerHTML = '';
+          data.videoReels.forEach((vItem, i) => {
+            const card = document.createElement('div');
+            card.className = 'item-edit-card';
+            card.setAttribute('data-video-index', i);
+
+            const displayNum = vItem.num || String(i + 1).padStart(2, '0');
+            const previewSrc = vItem.cover || `assets/images/thumbs/0${(i % 6) + 1}.jpg`;
+
+            card.innerHTML = `
+              <div class="item-card-header">
+                <div class="item-card-badge">
+                  <span>🎬 剪辑作品</span>
+                  <span class="count-pill">No. ${displayNum}</span>
+                </div>
+                <div class="item-card-actions">
+                  <button type="button" class="btn-icon-control btn-video-up" ${i === 0 ? 'disabled' : ''} title="向上移动顺序">↑ 上移</button>
+                  <button type="button" class="btn-icon-control btn-video-down" ${i === data.videoReels.length - 1 ? 'disabled' : ''} title="向下移动顺序">↓ 下移</button>
+                  <button type="button" class="btn-delete-card btn-video-del" title="从作品集删除此视频">🗑️ 删除此作品</button>
+                </div>
+              </div>
+
+              <div class="card-preview-col" style="cursor: pointer;" title="点击激活后可直接按 Ctrl+V 粘贴截图或复制的图片">
+                <img id="videoPreview_${i}" src="${previewSrc}" alt="封面预览" class="card-img-preview">
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                  <label class="file-upload-btn-label">
+                    <span>📷 挑选本地图片更换</span>
+                    <input type="file" id="videoCoverInput_${i}" accept="image/*" style="display: none;">
+                  </label>
+                  <button type="button" class="btn-paste-cover" data-idx="${i}" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.25); color: #ccc; border-radius: 6px; padding: 0.4rem; font-size: 0.72rem; cursor: pointer; transition: all 0.2s;" title="复制图片后点击此处直接粘贴">
+                    <span>📋 剪贴板一键粘贴 (Ctrl+V)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label">小红书原帖链接 (xhsUrl - 前台点击跳转)</label>
+                  <input type="text" id="inputXhsUrl_${i}" class="form-input" data-vfield="xhsUrl" placeholder="例如: https://www.xiaohongshu.com/explore/..." value="${vItem.xhsUrl || ''}">
+                </div>
+                <div class="form-group full-width">
+                  <label class="form-label">本地免登录 MP4 视频路径 (videoSrc - 可选)</label>
+                  <input type="text" class="form-input" data-vfield="videoSrc" placeholder="例如: assets/videos/01.mp4" value="${vItem.videoSrc || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">平台角标文案</label>
+                  <input type="text" class="form-input" data-vfield="badge" value="${vItem.badge || 'RED · 小红书'}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">视频时长文案</label>
+                  <input type="text" class="form-input" data-vfield="duration" value="${vItem.duration || '0:30'}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">序号角标 (如 01, 02)</label>
+                  <input type="text" class="form-input" data-vfield="num" value="${displayNum}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">分类标签 (如 节奏剪辑 · 动态封面)</label>
+                  <input type="text" class="form-input" data-vfield="category" value="${vItem.category || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">视频中文主标题</label>
+                  <input type="text" class="form-input" data-vfield="title" value="${vItem.title || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">英文副标题</label>
+                  <input type="text" class="form-input" data-vfield="titleEn" value="${vItem.titleEn || ''}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">预览按钮文字</label>
+                  <input type="text" class="form-input" data-vfield="btnPreview" value="${vItem.btnPreview || '▶ 在线预览'}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">悬停提示文字</label>
+                  <input type="text" class="form-input" data-vfield="btnHint" value="${vItem.btnHint || 'PREVIEW · 预览视频'}">
+                </div>
+              </div>
+            `;
+            videoContainer.appendChild(card);
+
+            // Live input sync
+            card.querySelectorAll('[data-vfield]').forEach(input => {
+              input.addEventListener('input', () => {
+                const field = input.getAttribute('data-vfield');
+                data.videoReels[i][field] = input.value;
+              });
+            });
+
+            // Local file cover upload
+            const vCoverInput = card.querySelector(`#videoCoverInput_${i}`);
+            if (vCoverInput) {
+              vCoverInput.addEventListener('change', async () => {
+                const file = vCoverInput.files[0];
+                if (!file) return;
+                showToast(`正在上传并优化剪辑作品 ${displayNum} 的封面图片...`);
+                try {
+                  const res = await uploadFileToServer(file, 'video', i);
+                  const coverUrl = (res.thumb || res.image) + '?t=' + Date.now();
+                  card.querySelector(`#videoPreview_${i}`).src = coverUrl;
+                  data.videoReels[i].cover = res.thumb || res.image;
+                  showToast(`🎉 剪辑作品 ${displayNum} 封面已成功更换，请点击右上角【保存修改】！`);
+                } catch (err) {
+                  console.error(err);
+                  showToast(`上传封面图片失败，请重试`);
+                }
+              });
+            }
+
+            // Click preview image to trigger file selection
+            const prevImg = card.querySelector(`#videoPreview_${i}`);
+            if (prevImg && vCoverInput) {
+              prevImg.addEventListener('click', (e) => {
+                vCoverInput.click();
+              });
+            }
+
+            // Drag and drop image file onto preview column
+            const previewCol = card.querySelector('.card-preview-col');
+            if (previewCol) {
+              previewCol.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                previewCol.style.opacity = '0.7';
+              });
+              previewCol.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                previewCol.style.opacity = '1';
+              });
+              previewCol.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                previewCol.style.opacity = '1';
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0 && files[0].type.startsWith('image/')) {
+                  const file = files[0];
+                  showToast(`正在上传拖拽的封面图片...`);
+                  try {
+                    const res = await uploadFileToServer(file, 'video', i);
+                    const coverUrl = (res.thumb || res.image) + '?t=' + Date.now();
+                    card.querySelector(`#videoPreview_${i}`).src = coverUrl;
+                    data.videoReels[i].cover = res.thumb || res.image;
+                    showToast(`🎉 剪辑作品 ${displayNum} 封面已成功更新！请点击右上角【保存修改】`);
+                  } catch (err) {
+                    console.error(err);
+                    showToast(`上传封面图片失败，请重试`);
+                  }
+                }
+              });
+            }
+
+            // Clipboard Paste on Card & Button
+            async function handlePasteImage(blob) {
+              showToast(`正在上传并优化粘贴的封面图片...`);
+              try {
+                const res = await uploadFileToServer(blob, 'video', i);
+                card.querySelector(`#videoPreview_${i}`).src = (res.thumb || res.image) + '?t=' + Date.now();
+                data.videoReels[i].cover = res.thumb || res.image;
+                showToast(`🎉 剪贴板图片已成功设为视频 ${displayNum} 封面！请点击右上角【保存修改】`);
+              } catch (err) {
+                console.error(err);
+                showToast(`粘贴图片处理失败，请重试`);
+              }
+            }
+
+            const btnPaste = card.querySelector('.btn-paste-cover');
+            if (btnPaste) {
+              btnPaste.addEventListener('click', async () => {
+                if (navigator.clipboard && navigator.clipboard.read) {
+                  try {
+                    const items = await navigator.clipboard.read();
+                    for (const item of items) {
+                      for (const type of item.types) {
+                        if (type.startsWith('image/')) {
+                          const blob = await item.getType(type);
+                          handlePasteImage(blob);
+                          return;
+                        }
+                      }
+                    }
+                    showToast('剪贴板中未找到图片，请在小红书右键【复制图片】后再点击此处！');
+                  } catch (err) {
+                    showToast('请在小红书右键【复制图片】后，直接按快捷键【Ctrl + V】粘贴！');
+                  }
+                } else {
+                  showToast('请直接使用快捷键【Ctrl + V】粘贴复制的图片！');
+                }
+              });
+            }
+
+            // Keyboard Ctrl+V paste on card
+            card.addEventListener('paste', (e) => {
+              const items = (e.clipboardData || window.clipboardData).items;
+              for (const it of items) {
+                if (it.type.indexOf('image') !== -1) {
+                  const blob = it.getAsFile();
+                  if (blob) {
+                    e.preventDefault();
+                    handlePasteImage(blob);
+                    return;
+                  }
+                }
+              }
+            });
+
+
+
+            // Move Up
+            const btnUp = card.querySelector('.btn-video-up');
+            if (btnUp) {
+              btnUp.addEventListener('click', () => {
+                if (i > 0) {
+                  const temp = data.videoReels[i];
+                  data.videoReels[i] = data.videoReels[i - 1];
+                  data.videoReels[i - 1] = temp;
+                  buildVideoCards();
+                  showToast('已调整剪辑作品顺序，请点击右上角保存！');
+                }
+              });
+            }
+
+            // Move Down
+            const btnDown = card.querySelector('.btn-video-down');
+            if (btnDown) {
+              btnDown.addEventListener('click', () => {
+                if (i < data.videoReels.length - 1) {
+                  const temp = data.videoReels[i];
+                  data.videoReels[i] = data.videoReels[i + 1];
+                  data.videoReels[i + 1] = temp;
+                  buildVideoCards();
+                  showToast('已调整剪辑作品顺序，请点击右上角保存！');
+                }
+              });
+            }
+
+            // Delete
+            const btnDel = card.querySelector('.btn-video-del');
+            if (btnDel) {
+              btnDel.addEventListener('click', () => {
+                if (confirm(`确定要从作品集中删除剪辑作品「${displayNum} · ${vItem.title || '未命名'}」吗？`)) {
+                  data.videoReels.splice(i, 1);
+                  data.videoReels.forEach((item, idx) => {
+                    item.num = String(idx + 1).padStart(2, '0');
+                  });
+                  buildVideoCards();
+                  showToast('剪辑作品已删除，请点击右上角“保存修改”以同步到前台！');
+                }
+              });
+            }
+          });
+        }
+
+        // Add New Video button
+        const btnAddVideo = document.getElementById('btnAddNewVideo');
+        if (btnAddVideo) {
+          btnAddVideo.onclick = () => {
+            const nextIdx = data.videoReels.length + 1;
+            const nextNum = String(nextIdx).padStart(2, '0');
+            data.videoReels.push({
+              id: nextIdx,
+              num: nextNum,
+              title: '新建剪辑作品 ' + nextNum,
+              titleEn: 'New Motion Reel',
+              category: '节奏剪辑 · 动态封面',
+              duration: '0:30',
+              badge: 'RED · 小红书',
+              cover: `assets/images/thumbs/0${((nextIdx - 1) % 6) + 1}.jpg`,
+              xhsUrl: 'https://www.xiaohongshu.com/explore',
+              videoSrc: '',
+              btnPreview: '▶ 在线预览',
+              btnHint: 'PREVIEW · 预览视频'
+            });
+            buildVideoCards();
+            const videoContainer = document.getElementById('videoCardsContainer');
+            if (videoContainer && videoContainer.lastElementChild) {
+              videoContainer.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            showToast(`已添加新剪辑作品 ${nextNum}，请填写链接与信息后点击保存！`);
+          };
+        }
+
+        buildPhotoCards();
+        buildVideoCards();
+      }
+
+      // 5. Commit Save All
+      async function saveAllChanges() {
+        const data = currentData;
+        if (!data) return;
+
+        // Harvest all general inputs with data-tid
+        document.querySelectorAll('[data-tid]').forEach(inp => {
+          const tid = inp.getAttribute('data-tid');
+          data.customTexts[tid] = inp.value;
+        });
+
+        // Harvest all font size sliders
+        if (!data.fontSizes) data.fontSizes = {};
+        document.querySelectorAll('input[data-fs-key]').forEach(slider => {
+          const key = slider.getAttribute('data-fs-key');
+          data.fontSizes[key] = parseInt(slider.value, 10);
+        });
+
+        // Harvest dynamic photo fields
+        if (Array.isArray(data.photography)) {
+          data.photography.forEach((p, idx) => {
+            const card = document.querySelector(`[data-photo-index="${idx}"]`);
+            if (card) {
+              card.querySelectorAll('[data-pfield]').forEach(input => {
+                const f = input.getAttribute('data-pfield');
+                p[f] = input.value;
+              });
+            }
+            // Mirror to customTexts for compatibility
+            data.customTexts[`photo_${idx}_index`] = p.num;
+            data.customTexts[`photo_${idx}_view_pill`] = p.viewPill;
+            data.customTexts[`photo_${idx}_title`] = p.title;
+            data.customTexts[`photo_${idx}_title_en`] = p.titleEn;
+            data.customTexts[`photo_${idx}_desc`] = p.desc;
+            data.customTexts[`photo_${idx}_spec1`] = p.spec1;
+            data.customTexts[`photo_${idx}_spec2`] = p.spec2;
+            data.customTexts[`photo_${idx}_spec3`] = p.spec3;
+          });
+        }
+
+        // Harvest dynamic video fields
+        if (Array.isArray(data.videoReels)) {
+          data.videoReels.forEach((v, idx) => {
+            const card = document.querySelector(`[data-video-index="${idx}"]`);
+            if (card) {
+              card.querySelectorAll('[data-vfield]').forEach(input => {
+                const f = input.getAttribute('data-vfield');
+                v[f] = input.value;
+              });
+            }
+            // Mirror to customTexts
+            data.customTexts[`video_${idx}_badge`] = v.badge;
+            data.customTexts[`video_${idx}_duration`] = v.duration;
+            data.customTexts[`video_${idx}_num`] = v.num;
+            data.customTexts[`video_${idx}_cat`] = v.category;
+            data.customTexts[`video_${idx}_title`] = v.title;
+            data.customTexts[`video_${idx}_title_en`] = v.titleEn;
+            data.customTexts[`video_${idx}_btn_preview`] = v.btnPreview;
+            data.customTexts[`video_${idx}_btn_hint`] = v.btnHint;
+          });
+        }
+
+        // Harvest Contact URLs & details
+        if (!data.contact) data.contact = {};
+        if (data.customTexts && data.customTexts.contact_email) {
+          data.contact.email = data.customTexts.contact_email.trim();
+        }
+        if (data.customTexts && data.customTexts.contact_wechat) {
+          data.contact.wechat = data.customTexts.contact_wechat.trim();
+        }
+        const biliLink = document.getElementById('linkContactBili');
+        if (biliLink) data.contact.bilibili = biliLink.value;
+
+        // Harvest Admin PIN
+        const pinInp = document.getElementById('inputAdminPin');
+        if (pinInp) {
+          if (!data.admin) data.admin = {};
+          data.admin.pin = pinInp.value.trim() || DEFAULT_PIN;
+        }
+
+        // 1. Safe localStorage save (Protected against quota exceeded)
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (err) {
+          console.warn("localStorage quota exceeded or blocked, trimming cached data", err);
+          try {
+            const trimmed = JSON.parse(JSON.stringify(data));
+            if (Array.isArray(trimmed.photography)) {
+              trimmed.photography.forEach(p => {
+                if (p && p.image && p.image.length > 500) p.image = '';
+                if (p && p.thumb && p.thumb.length > 500) p.thumb = '';
+              });
+            }
+            if (Array.isArray(trimmed.videoReels)) {
+              trimmed.videoReels.forEach(v => {
+                if (v && v.cover && v.cover.length > 500) v.cover = '';
+              });
+            }
+            if (trimmed.about && trimmed.about.portraitImg && trimmed.about.portraitImg.length > 500) {
+              trimmed.about.portraitImg = '';
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+          } catch(e){}
+        }
+
+        // 2. Save to backend via POST /api/save (ALWAYS GUARANTEED TO EXECUTE!)
+        let savedToDisk = false;
+        try {
+          const resp = await apiFetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          if (resp.ok) {
+            const res = await resp.json();
+            if (res.success) savedToDisk = true;
+          }
+        } catch(e) {
+          console.error("Save to disk failed", e);
+        }
+
+        const noticeMsg = savedToDisk
+          ? '🎉 已成功保存所有修改并同步写入本地 portfolio_data.json！'
+          : '已成功保存所有修改到浏览器缓存！(本地服务未运行，启动后将自动双向同步)';
+        showToast(noticeMsg);
+      }
+
+      const saveBtn = document.getElementById('btnHeaderSave');
+      if (saveBtn) saveBtn.addEventListener('click', saveAllChanges);
+
+      // 6. Export JSON
+      const exportBtn = document.getElementById('btnExportJson');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentData, null, 2));
+          const dlAnchor = document.createElement('a');
+          dlAnchor.setAttribute("href", jsonStr);
+          dlAnchor.setAttribute("download", `portfolio_backup_${new Date().toISOString().slice(0,10)}.json`);
+          document.body.appendChild(dlAnchor);
+          dlAnchor.click();
+          dlAnchor.remove();
+          showToast("已成功导出备份文件！");
+        });
+      }
+
+      // 7. Import JSON
+      const importInput = document.getElementById('importJsonInput');
+      if (importInput) {
+        importInput.addEventListener('change', () => {
+          const file = importInput.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            try {
+              const imported = JSON.parse(e.target.result);
+              currentData = imported;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData));
+              try {
+                await apiFetch('/api/save', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(currentData)
+                });
+              } catch(err){}
+              alert("导入成功，页面将自动重新载入！");
+              location.reload();
+            } catch (err) {
+              alert("导入失败：文件格式不合法");
+            }
+          };
+          reader.readAsText(file);
+        });
+      }
+
+      // 8. Reset to Default
+      const resetBtn = document.getElementById('btnResetDefault');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', async () => {
+          if (confirm("确定要恢复回出厂默认数据吗？当前所有自定义修改将被重置。")) {
+            localStorage.removeItem(STORAGE_KEY);
+            try {
+              const r = await apiFetch('/assets/data/portfolio_data.json?t=' + Date.now());
+              const def = await r.json();
+              currentData = def;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(def));
+              await apiFetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(def)
+              });
+            } catch(e){}
+            alert("已恢复默认设置！");
+            location.reload();
+          }
+        });
+      }
+
+      // 9. Logout
+      const logoutBtn = document.getElementById('btnLogout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem(AUTH_KEY);
+          sessionStorage.removeItem(AUTH_KEY);
+          showToast('已退出管理员模式');
+          setTimeout(() => location.reload(), 500);
+        });
+      }
+
+      // Toast Notification Helper
+      let toastTimer = null;
+      function showToast(msg) {
+        const toast = document.getElementById('toastNotice');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2800);
+      }
+
+      // Start loading
+      loadData();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,836 @@
+/* ==========================================================================
+   Admin & Visual Editor Styles
+   Minimalist, sleek, dark gallery aesthetic matching zhengtaopan.com
+   ========================================================================== */
+
+/* Discreet Floating Admin Entry Pill on index.html */
+.admin-trigger-pill {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 990;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.admin-trigger-pill:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(28, 28, 28, 0.95);
+  transform: translateY(-2px);
+}
+
+.admin-trigger-pill svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* Floating Admin Bar on index.html (Visible when logged in) */
+.admin-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.2rem;
+  background: rgba(14, 14, 14, 0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.8rem;
+  color: #f5f4f0;
+  font-size: 0.82rem;
+  animation: slideDown 0.3s ease;
+}
+
+.admin-top-bar.active {
+  display: flex;
+}
+
+body.admin-mode-active {
+  padding-top: 3.2rem;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+.admin-bar-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+.admin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 0 10px #3b82f6;
+}
+
+.admin-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #eee;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-btn.primary {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.admin-btn.primary:hover {
+  background: #1d4ed8;
+}
+
+.admin-btn.active-toggle {
+  background: #10b981;
+  border-color: #059669;
+  color: #fff;
+}
+
+/* In-place Editable Visual Hints */
+body.visual-edit-enabled [data-editable] {
+  outline: 1px dashed rgba(59, 130, 246, 0.5);
+  cursor: text;
+  border-radius: 2px;
+  transition: outline 0.2s ease;
+}
+
+body.visual-edit-enabled [data-editable]:hover,
+body.visual-edit-enabled [data-editable]:focus {
+  outline: 2px solid #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+/* Image Replace Badge */
+.image-replace-wrap {
+  position: relative;
+}
+
+.image-replace-btn {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  padding: 0.45rem 0.9rem;
+  background: rgba(15, 15, 15, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+body.visual-edit-enabled .image-replace-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.image-replace-btn:hover {
+  background: #2563eb;
+  border-color: #3b82f6;
+  transform: scale(1.05);
+}
+
+/* Password Modal */
+.admin-login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.admin-login-modal.active {
+  display: flex;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.login-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.login-title {
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+
+.login-subtitle {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: #1f1f1f;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus {
+  border-color: #3b82f6;
+}
+
+.login-btn-row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.login-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-btn.submit {
+  background: #fff;
+  color: #000;
+  border: none;
+  font-weight: 500;
+}
+
+.login-btn.submit:hover {
+  background: #e2dfd5;
+}
+
+.login-btn.cancel {
+  background: transparent;
+  color: #aaa;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.login-btn.cancel:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================================================
+   Full Admin Page (admin.html) Specific Layout
+   ========================================================================== */
+
+.admin-page-body {
+  background: #0d0d0d;
+  color: #e5e5e5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-page-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.admin-brand {
+  font-size: 1.15rem;
+  letter-spacing: 0.16em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.admin-badge {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+}
+
+.admin-sidebar {
+  background: #111111;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2rem 1rem;
+  position: sticky;
+  top: 4.8rem;
+  height: calc(100vh - 4.8rem);
+  overflow-y: auto;
+}
+
+.admin-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-nav-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-nav-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 500;
+}
+
+.admin-main-content {
+  padding: 2.5rem 3.5rem 6rem;
+  max-width: 1080px;
+}
+
+.admin-tab-pane {
+  display: none;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.admin-tab-pane.active {
+  display: flex;
+}
+
+.section-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.2rem;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 0.3rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.8rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #f5f4f0;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus, .form-textarea:focus {
+  border-color: #3b82f6;
+  background: #1c1c1c;
+}
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* Card List for Photos & Videos in Admin */
+.item-edit-card {
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.8rem;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.card-preview-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.card-img-preview {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-img-preview.ratio-9-16 {
+  aspect-ratio: 9 / 16;
+}
+
+.file-upload-btn-label {
+  display: block;
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  font-size: 0.74rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-upload-btn-label:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+/* Dynamic Item Action Toolbar & Card Controls */
+.section-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.count-pill {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #bbb;
+}
+
+.btn-add-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.3rem;
+  background: #2563eb;
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+}
+
+.btn-add-item:hover {
+  background: #1d4ed8;
+  border-color: #60a5fa;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+.item-card-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.item-card-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
+  letter-spacing: 0.12em;
+  color: #fff;
+  font-weight: 500;
+}
+
+.item-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-icon-control {
+  padding: 0.35rem 0.7rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #bbb;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-control:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.btn-icon-control:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-delete-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-card:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+@media (max-width: 860px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+  .admin-sidebar {
+    height: auto;
+    position: relative;
+    top: 0;
+  }
+  .item-edit-card {
+    grid-template-columns: 1fr;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Auth Lock screen for admin.html */
+.admin-auth-lock {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0d0d0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+  text-align: center;
+}
+
+.auth-icon {
+  font-size: 2.5rem;
+}
+
+.auth-title {
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+
+.auth-desc {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.6;
+}
+
+/* Ensure site-header does NOT get covered by admin-top-bar on index.html */
+body.admin-mode-active .site-header {
+  top: 3.2rem !important;
+}
+
+
+/* ==========================================================================
+   Typography & Font Size Setting Controls (各部分文本字号实时调节)
+   ========================================================================== */
+
+.typography-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+}
+
+.typo-group-card {
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.8rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.typo-group-title {
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.typo-items-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.typo-item-row {
+  display: grid;
+  grid-template-columns: 240px 1fr 180px;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.9rem 1.2rem;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.typo-item-row:hover {
+  background: #202020;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.typo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.typo-label {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #eee;
+}
+
+.typo-code {
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: #777;
+}
+
+.typo-slider-col {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.typo-range-input {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #333;
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.typo-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s ease;
+}
+
+.typo-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.typo-val-badge {
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  background: #282828;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  min-width: 58px;
+  text-align: center;
+}
+
+.typo-preview-box {
+  padding: 0.4rem 0.8rem;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #f5f4f0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: font-size 0.1s ease;
+}
+
+@media (max-width: 900px) {
+  .typo-item-row {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+}

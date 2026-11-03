@@ -1,0 +1,26 @@
+# Large raw media and original camera shots
+素材拍剪/
+素材文件/
+博主封面摄影/
+*.mp4
+*.MP4
+*.MOV
+*.mov
+*.HEIC
+*.heic
+
+# Raw root images and heavy fonts
+/Me.JPG
+/CormorantGaramond-Light.ttf
+*.otf
+
+# Temporary dev & scratch directories
+scratch/
+deploy/
+deploy.zip
+.gemini/
+*.py
+*.bak
+*.bak.json
+*.log
+.env*
