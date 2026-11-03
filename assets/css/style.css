@@ -2178,11 +2178,6 @@ button {
 }
 
 /* Dark Mode Adaptation */
-[data-theme="dark"] .ambient-light-bg,
-body:not([data-theme="light"]):not(.light-theme) .ambient-light-bg {
-  /* When dark exhibition theme is active, softly shift into moonlight caustics */
-}
-
 [data-theme="dark"] .ambient-light-bg {
   mix-blend-mode: screen;
   filter: invert(1) hue-rotate(185deg) brightness(0.65) contrast(1.15);

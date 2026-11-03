@@ -608,28 +608,36 @@ document.addEventListener('DOMContentLoaded', () => {
   initVideoHorizontalGallery();
 
   // ==========================================================================
-  // Theme Switcher (Dark Gallery default vs Light Exhibition)
+  // Theme Switcher (Light Exhibition default vs Dark Gallery)
   // ==========================================================================
   const themeToggleBtn = document.getElementById('themeToggleBtn');
-  const savedTheme = localStorage.getItem('portfolio_theme') || 'dark';
-
-  function applyTheme(theme) {
-    if (theme === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-    localStorage.setItem('portfolio_theme', theme);
+  // Default to 'light' (Day mode)
+  let savedTheme = localStorage.getItem('portfolio_theme_mode');
+  if (!savedTheme) {
+    // Clear old legacy 'dark' auto-save if present
+    localStorage.removeItem('portfolio_theme');
+    savedTheme = 'light';
   }
 
-  applyTheme(savedTheme);
+  function applyTheme(theme, save = false) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    if (save) {
+      localStorage.setItem('portfolio_theme_mode', theme);
+    }
+  }
+
+  applyTheme(savedTheme, false);
 
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-      const next = current === 'light' ? 'dark' : 'light';
-      applyTheme(next);
-      showToast(next === 'light' ? '明亮展厅模式 (Light Exhibition)' : '暗色画廊模式 (Dark Gallery)');
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next, true);
+      showToast(next === 'light' ? '白天模式 (Light Exhibition)' : '夜色画廊模式 (Dark Gallery)');
     });
   }
 
